@@ -1,0 +1,21 @@
+{
+    "data": {
+        "validation_data": {
+            "data_mode": "random",
+            "max_samples": 1
+        }
+    },
+    "model": {
+        "inference_engine": "ifx",
+        "key_model": "TEST_MODEL",
+        "load_model": "C:/Users/data_science/Desktop/Projects/bagajnik/intive_git_files_04.1.23/smarttrunkopener-feature-benchmarking/tf_net/models/small_seq_gru.h5",
+        "optimization_settings": {
+            "headroom_weights": 6,
+            "target": [
+                "PSoC6"
+            ]
+        }
+    },
+    "run_mode": "deploy",
+    "version": "2.0.0"
+}

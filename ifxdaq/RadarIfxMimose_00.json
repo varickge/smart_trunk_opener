@@ -1,0 +1,70 @@
+{
+    "clock_config": {
+        "reference_clock": 38.4,
+        "system_clock": 38.4,
+        "rc_clock_enabled": false,
+        "hf_on_time_sec": 1e-06,
+        "system_clock_divider": 0,
+        "system_clock_div_flex": false,
+        "sys_clk_to_i2c": false
+    },
+    "pulse_config": [
+        {
+            "channel": 0,
+            "tx_power_level": 60,
+            "abb_gain_index": 7
+        },
+        {
+            "channel": 1,
+            "tx_power_level": 45,
+            "abb_gain_index": 7
+        },
+        {
+            "channel": 0,
+            "tx_power_level": 63,
+            "abb_gain_index": 7
+        },
+        {
+            "channel": 1,
+            "tx_power_level": 63,
+            "abb_gain_index": 7
+        }
+    ],
+    "frame_config": [
+        {
+            "frame_repetition_time_sec": 0.04,
+            "pulse_repetition_time_sec": 0.0005,
+            "selected_pulse_configs": [
+                true,
+                true,
+                false,
+                false
+            ],
+            "num_of_samples": 32
+        },
+        null
+    ],
+    "sensor_selection": {
+        "CONV1_SEL": 0,
+        "CONV2_SEL": 0,
+        "CONV3_SEL": 0
+    },
+    "memory_offset": {
+        "MEM_RAW": 0,
+        "MEM_RAW2": 0,
+        "MEM_FT": 256,
+        "MEM_TRG": 512,
+        "MEM_SENS": 544
+    },
+    "target_detection": [
+    ],
+    "target_detection_global": {
+        "direction_of_movement": 0,
+        "enable_ir_trigger": [
+            false,
+            false,
+            false,
+            false
+        ]
+    }
+}

@@ -1,0 +1,224 @@
+% ===========================================================================
+% Copyright (C) 2022 Infineon Technologies AG
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are met:
+%
+% 1. Redistributions of source code must retain the above copyright notice,
+%    this list of conditions and the following disclaimer.
+% 2. Redistributions in binary form must reproduce the above copyright
+%    notice, this list of conditions and the following disclaimer in the
+%    documentation and/or other materials provided with the distribution.
+% 3. Neither the name of the copyright holder nor the names of its
+%    contributors may be used to endorse or promote products derived from
+%    this software without specific prior written permission.
+%
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.
+% ===========================================================================
+% atr22_data  test configure atr22 device using strata, receive and plot data.
+
+close all;
+clearvars;
+clc;
+
+if ~isdeployed
+    run('../../addStrataPath.m');
+    addpath('../config/');
+    addpath('common/');
+end
+
+
+% guiObj = gui_app;
+
+PRT = 0.500e-3;
+numPCs=2;
+N_FFT=32; %number of point of FFT on IC
+selectedWindow=6;
+c=3e8;
+fc=24.2e9;
+lambda=c/fc;
+
+sampleSize = 32;
+TH=100;
+targetLen=2;
+FrameTime=40e-3;
+Fsamp=1/PRT;
+TimeAxis=[];
+time_avg_len=12;
+
+% SysClck='RC_Clk';
+SysClck='XTAL';
+
+
+%% connect to device
+board = strata.Connection.withAutoAddress();
+[vid, pid] = board.getIds();
+fprintf('RBB vid = 0x%x, pid = 0x%x\n', vid, pid);
+
+%% obtain Atr22 device interfaces
+radarAtr22 = board.getComponent('IRadarAtr22', 0);
+register = strata.NamedRegister.NamedRegister(radarAtr22.getIRegisters(), 'atr22_regmap_from_essence.json');
+databridge = board.getIBridgeData();
+data = board.getIData();
+dataIndex = 0;
+% stop any ongoing data transmission
+data.stop(dataIndex);
+
+%% configure data readout
+memoryStartAddress = 0x3800;
+memRawOffset = 0; % default value;
+memFtOffset = 256; % default value;
+memTargetOffset = 512; % default value;
+
+memRawDataStatAddress = memoryStartAddress;
+rawDataReadCount = 64 * 2;
+
+memFtDataStartAddress = memoryStartAddress + memFtOffset * 2;
+ftDataReadCount = 256 * 2;
+
+memTargetDataStartAddress=memoryStartAddress + memTargetOffset*2;
+trgtDataReadCount = 2*targetLen* 2;
+
+% Read "FRAME_COUNTER"
+FrameCounterAdd=hex2dec('0301');
+FrameCounterReadCount=1;
+readout =[
+    memRawDataStatAddress rawDataReadCount;
+    memFtDataStartAddress ftDataReadCount;
+    memTargetDataStartAddress trgtDataReadCount;
+    FrameCounterAdd        FrameCounterReadCount
+    ];
+
+dataSettings = strata.DataSettingsBgtRadar(readout, 0);
+data_properties.format = 0;
+data.configure(dataIndex, data_properties, dataSettings);
+
+regSizeInBytes = 2;
+frameBufferSize = sum(readout(:,2)) * regSizeInBytes ;
+databridge.setFrameBufferSize(frameBufferSize);
+databridge.setFrameQueueSize(16);
+databridge.startStreaming();
+
+data.start(dataIndex)
+
+%% configuring device registers
+% register.write(config_atr22_example())
+% FileName='VT_Reg_list_2_shortened.txt';
+% FileName='TargetData_Patch_plus_Yagi_Strongest4targets_32samples_prt500us_frame20ms.txt';
+% FileName='TargetData_Patch_plus_Yagi_Strongest2targets_16samples_prt1ms_frame22ms_zeroPadded32fft.txt';
+if strcmp(SysClck,'XTAL')
+    FileName=['common/TargetData_Patch_plus_Yagi_Strongest' num2str(targetLen) 'targets_' num2str(sampleSize) 'samples_prt500us_frame' num2str(round(FrameTime*1000)) 'ms_FFT' num2str(N_FFT) 'points_B1.txt'] ;
+elseif strcmp(SysClck,'RC_Clk')
+    FileName=['common/TargetData_Patch_plus_Yagi_Strongest' num2str(targetLen) 'targets_' num2str(sampleSize) 'samples_prt500us_frame' num2str(round(FrameTime*1000)) 'ms_FFT' num2str(N_FFT) 'points_B1_RC_CLK10MHz.txt'] ;
+end
+% FileName=['Pzthon working.txt'];
+RegisterSettings=convert_Presilicon2MatlabRegisters(FileName);
+ 
+
+register.write(RegisterSettings{1,:})
+
+% sizeofSettings=size(RegisterSettings);
+% for j=1:sizeofSettings(1)
+%     register.write(RegisterSettings{j,1},RegisterSettings{j,2})
+% end
+
+
+sizeofSettings=size(RegisterSettings);
+for j=1:sizeofSettings(1)
+    register.write(RegisterSettings{j,:})
+end
+
+
+% register.write(0x001, 20)
+%default sample size is 128
+
+%% Output power arrangement
+% You can change
+PatchAntennaPowerIndex=60; % Power index could be between 0 (min): 63 (max)  
+YagiAntennaPowerIndex=45; % Power index could be between 0 (min): 63 (max)  
+
+register.write('TX1_PC0_CONF', 0x0001+bitshift(PatchAntennaPowerIndex,1));
+register.write('TX2_PC1_CONF', 0x0001+bitshift(YagiAntennaPowerIndex,1));
+
+
+%% Baseband gain settings 
+% You can change
+register.write('PC0_AGC', 0xE); % BaseBand gain settings 
+register.write('PC1_AGC', 0xE); % BaseBand gain settings 
+register.write('PC2_AGC', 0x0); % BaseBand gain settings 
+register.write('PC3_AGC', 0x0); % BaseBand gain settings 
+%0x0000: All BB Gain indices are 0
+%0x2222: All BB Gain indices are 1
+%0x4444: All BB Gain indices are 2
+%0x6666: All BB Gain indices are 3
+%0x8888: All BB Gain indices are 4
+%0xAAAA: All BB Gain indices are 5
+%0xCCCC: All BB Gain indices are 6
+%0xEEEE: All BB Gain indices are 7
+
+%% start sequencer
+disp('acquisition is starting!!!')
+register.write("SEQ_MAIN_CONF.SEQ_EXECUTE", 1) % starts ATR22
+
+
+count = 1;
+recorded_data_target = {};
+recorded_data_raw = {};
+timestamps = {};
+recording_path =  userpath + "/matlab_recording_" + datestr(datetime('now'),'yyyy_mm_dd_HH_MM_SS') + "/RadarIfxMimose_00";
+mkdir(recording_path);
+fprintf("Save recording to: %s\n", recording_path);
+hWaitbar = waitbar(0, 'Iteration 1', 'Name', 'Recording','CreateCancelBtn','delete(gcbf)');
+
+
+while true
+    drawnow;
+    if ~ishandle(hWaitbar)
+        % Stop the if cancel button was pressed
+        disp('Recording stopped by user');
+        break;
+    else
+        % Update the wait bar
+        waitbar(count/5,hWaitbar, ['Iteration ' num2str(count)]);
+    end
+    measurement = board.getFrame(500);
+    if ~isempty(measurement)
+        
+        measurement16 = typecast(measurement,'uint16');
+        % readout data        
+        memRawData = measurement16(1:rawDataReadCount);
+        memTargetData = measurement16(memTargetDataStartAddress:memTargetDataStartAddress + trgtDataReadCount-1);
+
+        timestamps(count) = {datestr(datetime('now'),'yyyy_mm_dd_HH_MM_SS_FFF')};
+        recorded_data_raw(count) = {uint16(memRawData)};
+        recorded_data_target(count) = {uint16(memTargetData)};
+
+        count = count + 1;
+
+    end
+end
+
+writematrix(timestmaps, recording_path + "/radar_timestamps.csv");
+writematrix(rawData, recording_path + "/radar.csv");
+writematrix(timestmaps, recording_path + "/target_timestamps.csv");
+writematrix(targetDataRaw, recording_path + "/target.csv");
+
+
+%% stop sequencer
+register.write("SEQ_MAIN_CONF.SEQ_EXECUTE", 0);
+disp('acquisition is stopped!')
+delete(hWaitbar);
+close all;
+
+   
+ 

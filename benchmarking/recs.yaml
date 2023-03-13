@@ -1,0 +1,83 @@
+# Scenario list for benchmarking
+# ==============================
+#
+# Syntax:
+#     <name of the recording>
+#       scope: [<scope of the recording - allowed values: debug|all>]
+
+
+# STO_000
+benchmarking/STO_000/recording_2023_01_18_11_02_10/RadarIfxMimose_00:
+    scope: [all, debug]
+benchmarking/STO_000/recording_2023_01_18_11_29_53/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_000/recording_2023_01_18_11_44_51/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_000/recording_2023_01_19_10_33_35/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_000/recording_2023_01_19_10_41_59/RadarIfxMimose_00:
+    scope: [all]
+
+# STO_010
+benchmarking/STO_010/recording_2023_01_18_11_03_52/RadarIfxMimose_00:
+    scope: [all, debug]
+benchmarking/STO_010/recording_2023_01_18_11_31_34/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_010/recording_2023_01_18_11_46_07/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_010/recording_2023_01_19_10_35_05/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_010/recording_2023_01_19_10_43_21/RadarIfxMimose_00:
+    scope: [all]
+    
+# STO_020
+benchmarking/STO_020/recording_2023_02_14_16_12_04/RadarIfxMimose_00:
+    scope: [all, debug]
+benchmarking/STO_020/recording_2023_02_14_16_19_58/RadarIfxMimose_00:
+    scope: [all]
+    
+# STO_021
+benchmarking/STO_021/recording_2023_02_14_16_04_58/RadarIfxMimose_00:
+    scope: [all, debug]
+benchmarking/STO_021/recording_2023_02_14_16_07_58/RadarIfxMimose_00:
+    scope: [all]
+    
+# STO_022
+benchmarking/STO_022/recording_2023_02_14_16_22_26/RadarIfxMimose_00:
+    scope: [all, debug]
+    
+# STO_100
+benchmarking/STO_100/recording_2023_01_18_11_05_49/RadarIfxMimose_00:
+    scope: [all, debug]
+benchmarking/STO_100/recording_2023_01_18_11_33_51/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_100/recording_2023_01_18_11_47_21/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_100/recording_2023_01_19_10_36_47/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_100/recording_2023_01_19_10_44_39/RadarIfxMimose_00:
+    scope: [all]
+    
+# STO_110
+benchmarking/STO_110/recording_2023_01_18_11_08_48/RadarIfxMimose_00:
+    scope: [all, debug]
+benchmarking/STO_110/recording_2023_01_18_11_36_38/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_110/recording_2023_01_18_11_48_56/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_110/recording_2023_01_19_10_39_16/RadarIfxMimose_00:
+    scope: [all]
+benchmarking/STO_110/recording_2023_01_19_10_46_16/RadarIfxMimose_00:
+    scope: [all]
+    
+# STO_200
+benchmarking/STO_200/recording_2023_01_18_11_12_13/RadarIfxMimose_00:
+    scope: [all, debug]
+benchmarking/STO_200/recording_2023_01_18_11_39_31/RadarIfxMimose_00:
+    scope: [all]
+    
+# STO_210
+benchmarking/STO_210/recording_2023_01_18_11_14_54/RadarIfxMimose_00:
+    scope: [all, debug]
+benchmarking/STO_210/recording_2023_01_18_11_41_04/RadarIfxMimose_00:
+    scope: [all]

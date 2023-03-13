@@ -1,0 +1,18 @@
+{
+    "cycles_float": 150808,
+    "scratch_mem_float": 1032,
+    "state_float": 256,
+    "model_mem_float": 57380,
+    "cycles_int16x16": 150424,
+    "scratch_mem_int16x16": 644,
+    "state_int16x16": 128,
+    "model_mem_int16x16": 28700,
+    "cycles_int16x8": 150616,
+    "scratch_mem_int16x8": 644,
+    "state_int16x8": 128,
+    "model_mem_int16x8": 14360,
+    "cycles_int8x8": 172988,
+    "scratch_mem_int8x8": 580,
+    "state_int8x8": 128,
+    "model_mem_int8x8": 14360
+}

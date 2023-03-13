@@ -1,0 +1,1 @@
+\nTPR (True Positive Rate): TP / (TP + FN)\nTNR (True Negative Rate): TN / (TN + FP)\n\nD (Deletion)\nF (Fragmenting)\nU_alpha (Underfill start)\nU_omega (Underfill end)\n\nI (Insertion)\nM (Merge)\nO_alpha (Overfill start)\nO_omega (Overfill end)\n\nThe segment definitons can be found in the previous page.
